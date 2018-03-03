@@ -13,9 +13,9 @@ import certifi
 import dateutil.parser
 
 ############################################################################
-# 
+#
 # 1. Tournament Configuration
-# 
+#
 ############################################################################
 
 # Read Config File
@@ -37,12 +37,12 @@ AssignmentInfo = json.loads(response.data)
 dueDate = dateutil.parser.parse(AssignmentInfo["due_at"])
 
 ############################################################################
-# 
+#
 # 2. Organize Canvas Submissions
-# 
+#
 # Adds team_name (from canvas submit) as key in 'output'
 # Adds submit_name, submit_time, submit_download to 'output'
-# 
+#
 ############################################################################
 
 # Raw JSON Data
@@ -88,9 +88,9 @@ for submit in valid_submits:
 		output[team_name] = [submit_name, submit_time, submit["url"]]
 
 ############################################################################
-# 
+#
 # 3. Organize Student Data
-# 
+#
 ############################################################################
 
 # Raw JSON Data
@@ -120,9 +120,9 @@ for j in student_data:
 	student_names.add(j["name"])
 
 ############################################################################
-# 
+#
 # 4. Download Team Data
-# 
+#
 ############################################################################
 
 # Raw JSON Data
@@ -177,7 +177,7 @@ for j in group_data:
 		emptyTeamNames.add(j["name"])
 
 # Gather Member Data
-for i in valid_submitseams.keys():
+for i in valid_teams.keys():
 	url = "https://canvas.eee.uci.edu/api/v1/groups/"	\
 			+ str(i)									\
 			+ "/users?per_page=100"						\
@@ -209,9 +209,9 @@ print ( "Students not in any Groups" )
 print ( student_names - Names )
 
 ############################################################################
-# 
+#
 # 5. Link Team Data
-# 
+#
 ############################################################################
 
 # Error Sets
@@ -226,7 +226,7 @@ for team in valid_teams.values():
 		teams_with_no_submit.add(team[0])
 	else:
 		teams_with_submit.add(team[0])
-	
+
 	for i in range(1, len(team)):
 		output[team[0]].append(team[i])
 
@@ -245,9 +245,9 @@ print ( "Teams with no Submission" )
 print ( teams_with_no_submit )
 
 ############################################################################
-# 
+#
 # 6. Download Submissions
-# 
+#
 ############################################################################
 
 for k,v in output.items():
@@ -264,9 +264,9 @@ for k,v in output.items():
 		f.close()
 
 ############################################################################
-# 
+#
 # 7. Extract Files
-# 
+#
 ############################################################################
 
 for k,v in output.items():
@@ -289,9 +289,9 @@ for k,v in output.items():
 	out, err = process.communicate()
 
 ############################################################################
-# 
+#
 # 8. Generate Worlds
-# 
+#
 ############################################################################
 
 bashCommand   = "bash" + " " \
@@ -303,9 +303,9 @@ process       = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
 out, err = process.communicate()
 
 ############################################################################
-# 
+#
 # 9. Run Submissions
-# 
+#
 ############################################################################
 
 for k,v in output.items():
@@ -339,7 +339,7 @@ for k,v in output.items():
 		output[k].append("No")
 	else:
 		output[k].append("Yes")
-	
+
 	# Write Compiled
 	if len(results) < 3 or "FATALERR" in results[2]:
 		output[k].append("No")
@@ -361,9 +361,9 @@ for k,v in output.items():
 		output[k].append(results[4].split(" ")[-1])
 
 ############################################################################
-# 
+#
 # 10. Grade Submission
-# 
+#
 ############################################################################
 
 # Error Sets
@@ -402,7 +402,7 @@ for k,v in output.items():
 		on_time_teams.add(k)
 	else:
 		late_teams.add(k)
-		
+
 		grade += max_grade*0.1*float(time_dif.days)
 
 	if grade < 0:
@@ -411,9 +411,9 @@ for k,v in output.items():
 	output[k].append(grade)
 
 ############################################################################
-# 
+#
 # 11. Print Scoreboard
-# 
+#
 ############################################################################
 
 with open('output.csv', 'w') as f:
